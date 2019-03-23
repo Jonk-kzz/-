@@ -93,6 +93,18 @@
 					nickname1.addEventListener("tap",function(){
 						mui.openWindow("me_nickname.html","nickname");
 					});
+					var qrcode=document.getElementById("qrcode");
+					qrcode.addEventListener("tap",function(){
+						mui.openWindow("me_qrcode.html","me_qrcode");
+					});
+						
+					<!--退出登陆-->
+					var exit = document.getElementById("exit");
+					exit.addEventListener("tap", function() {
+						// 清空用户信息
+						plus.storage.removeItem("user");
+						plus.runtime.restart();
+					})
 					
 					
 					// 加载当前用户信息
@@ -122,7 +134,7 @@
 						<!--账号-->
 						username.innerHTML = user.username;
 						<!--二维码-->
-						qrCodeIcon.src = "image/qrcode.png";
+						qrCodeIcon.src = config.IMG_URL+user.qrcode;
 					}
 				
 				

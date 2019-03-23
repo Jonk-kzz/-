@@ -49,11 +49,11 @@
 
 				// 接收从上一个页面传递过来的数据
 				var friend = plus.webview.currentWebview().friend;
-
+				console.log(JSON.stringify(friend));
 				// 设置前端组件数据
-				photo.src = friend.picSmall;
-				nickname.innerHTML = friend.nickname;
-				username.innerHTML = friend.username;
+				photo.src =config.IMG_URL+friend[0].picSmall;
+				nickname.innerHTML = friend[0].nickname;
+				username.innerHTML = friend[0].username;
 
 				var add = document.getElementById("add");
 				add.addEventListener("tap", function() {
@@ -63,7 +63,7 @@
 					mui.ajax(config.SERVER_URL + "/friend/sendRequest", {
 						data: {
 							fromUserid: user.id,
-							toUserid: friend.id
+							toUserid: friend[0].id
 						},
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
@@ -73,7 +73,6 @@
 						},
 						success: function(data) {
 							console.log("好友请求结果:" + JSON.stringify(data));
-
 							if(data.success) {
 								mui.toast(data.message);
 								mui.openWindow({

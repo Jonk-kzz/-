@@ -65,7 +65,7 @@
 			
 			function reloadUser(userid) {
 				// 重新加载用户信息保存到本地缓存
-				mui.ajax(config.SERVER_URL + "/user/findById?userId=" + userid, {
+				mui.ajax(config.SERVER_URL+"/user/findById/"+userid, {
 					dataType: 'json', //服务器返回json格式数据
 					type: 'get', //HTTP请求类型
 					timeout: 10000, //超时时间设置为10秒；
@@ -75,15 +75,14 @@
 					success: function(res) {
 						console.log("重新加载用户信息:" + JSON.stringify(res));
 						util.saveUser(res.data);
-						// 返回到main_me页面
-						mui.back();
+						
 						// 触发自定义的refresh事件重新加载昵称
 						// 获取main_me的webview
 						var main_me = plus.webview.getWebviewById("main_me.html");
+						// 返回到main_me页面
+						mui.back();
 						// 触发refresh自定义事件
-						mui.fire(main_me, "refresh");
-
-						
+						mui.fire(main_me, "refresh");		
 
 					}
 				});

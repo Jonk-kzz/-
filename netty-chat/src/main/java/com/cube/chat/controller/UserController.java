@@ -81,8 +81,24 @@ public class UserController {
         return userService.updateNickname(user.getId(),user.getNickname());
     }
 
+    /**
+     * 重新加载用户信息
+     * @param userId
+     * @return
+     */
     @GetMapping("/findById/{userId}")
     public ResponseResult findById(@PathVariable("userId") String userId){
         return userService.findById(userId);
     }
+
+    @PostMapping("/findByUsername/{username}")
+    public ResponseResult findByUidAndUsername(@PathVariable("username") String username){
+        return userService.findByUsername(username);
+    }
+
+
+
+
+
+
 }

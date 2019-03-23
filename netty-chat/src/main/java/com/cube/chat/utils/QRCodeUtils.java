@@ -16,7 +16,12 @@ import java.util.HashMap;
 
 @Component
 public class QRCodeUtils {
-	
+
+    /**
+     * 保存而二维码图片到指定的路径
+     * @param filePath 指定的路径
+     * @param content 二维码的内存(字符串)
+     */
 	public void createQRCode(String filePath, String content) {
 		int width=300;      		//图片的宽度
         int height=300;     		//图片的高度

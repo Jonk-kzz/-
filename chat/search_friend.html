@@ -37,21 +37,20 @@
 				search.addEventListener("tap", function() {
 					var user = util.getUser();
 					
-					util.ajax("/user/findByUsername?userid=" + user.id + "&friendUsername=" + friendName.value, {
-						},
-						function(data) {
-							console.log(JSON.stringify(data));
-							if(data.success) {
+					util.ajax("/user/findByUsername/"+friendName.value, {},
+						function(res) {
+							/* console.log(JSON.stringify(res)); */
+							if(res.success) {
 								mui.openWindow({
 									url: "search_friend_result.html",
 									id: "search_friend_result",
 									extras: {
-										friend: data.result
+										friend: res.data
 									}
 								});
 							}
 							else {
-								mui.toast(data.message);
+								mui.toast(res.message);
 							}
 						});
 				})

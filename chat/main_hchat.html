@@ -12,7 +12,7 @@
 
 		<div class="mui-content">
 			<ul id="ul" class="mui-table-view">
-				<!--<li class="mui-table-view-cell mui-media">
+				<li class="mui-table-view-cell mui-media">
 		            <a href="javascript:;">
 		                <img id="friendphoto" class="mui-media-object mui-pull-left" src="http://placehold.it/40x30">
 		                <span class="mui-pull-right">
@@ -25,11 +25,11 @@
 		                    <p class="mui-ellipsis">请求添加好友</p>
 		                </div>
 		            </a>
-		        </li>-->
+		        </li>
 			</ul>
 			
 			<ul id="ul1" class="mui-table-view">
-			    <!--<li class="mui-table-view-cell mui-media">
+			    <li class="mui-table-view-cell mui-media">
 			        <a href="javascript:;">
 			            <img class="mui-media-object mui-pull-left" src="image/default_user_pic.png">
 			            <div class="mui-media-body">
@@ -55,7 +55,7 @@
 			                <p class="mui-ellipsis">烤炉模式的城，到黄昏，如同打翻的调色盘一般.</p>
 			            </div>
 			        </a>
-			    </li>-->
+			    </li>
 			</ul>
 		</div>
 		
@@ -135,24 +135,25 @@
 			// 加载好友请求
 			function reloadFriendReq() {
 				var user = util.getUser();
+				console.log(JSON.stringify(user));
 				// 加载好友请求
-/* 				mui.ajax(config.SERVER_URL + "/friend/findFriendReqByUserid?userid=" + user.id, {
-					data: {},
+				mui.ajax({
+					url: 'http://192.168.1.106:9000/friend/findFriendReqByUserId/'+user.id,
 					dataType: 'json', //服务器返回json格式数据
-					type: 'post', //HTTP请求类型
+					type: 'get', //HTTP请求类型
 					timeout: 10000, //超时时间设置为10秒；
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					success: function(data) {
-						
+					success: function(res) {
+						console.log(JSON.stringify(res))
 						var html = '';
-						if(data != null && data.length > 0) {
-							for(var i = 0; i < data.length; ++i) {
-								var friendHTML = friendreqTemplate.replace("#friendphoto#", data[i].picSmall)
-									.replace("#reqid1#", data[i].id)
-									.replace("#reqid2#", data[i].id)
-									.replace("#nickname#", data[i].nickname);
+						if(res.data != null && res.data.length > 0) {
+							for(var i = 0; i < res.data.length; ++i) {
+								var friendHTML = friendreqTemplate.replace("#friendphoto#",config.IMG_URL+res.data[i].picSmall)
+									.replace("#reqid1#", res.data[i].id)
+									.replace("#reqid2#", res.data[i].id)
+									.replace("#nickname#", res.data[i].nickname);
 								html += friendHTML;
 							}
 							var ul = document.getElementById("ul");
@@ -173,17 +174,17 @@
 							ul.innerHTML = '';
 						}
 					}
-				}); */
+				});
 			}
 			
 			function handlerFriendReq(reqid, result) {
 				var url = '';
 				
 				if(result == 0) {
-					url = "/friend/ignoreFriendReq?reqid=" + reqid;
+					url = '/friend/ignoreFiendReq/'+ reqid;
 				}
 				else {
-					url = "/friend/acceptFriendReq?reqid=" + reqid;
+					url = '/friend/acceptFriendReq/'+ reqid;
 				}
 				
 			mui.ajax(config.SERVER_URL + url, {
@@ -244,7 +245,7 @@
 						};
 						
 						CHAT.socket.onmessage = function(e) {
-							
+							console.log(e);
 							// 更新通信录列表
 							var message = JSON.parse(e.data);
 							var type = message.type;
@@ -327,7 +328,7 @@
 			function loadChatSnapshot() {
 				var user = util.getUser();
 				// 加载未读的聊天记录
-			/* 	mui.ajax(config.SERVER_URL + "/chatrecord/findUnreadByUserid?userid=" + user.id , {
+				mui.ajax(config.SERVER_URL + "/chatrecord/findUnreadByUserid?userid=" + user.id , {
 					data: {
 					},
 					dataType: 'json', //服务器返回json格式数据
@@ -420,7 +421,7 @@
 							}
 						}
 					}
-				}); */
+				});
 				
 				
 			}

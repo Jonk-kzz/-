@@ -1,5 +1,6 @@
 package com.cube.chat.service.impl;
 
+import com.cube.chat.dao.FriendReqMapper;
 import com.cube.chat.dao.UserMapper;
 import com.cube.chat.exception.ExceptionCast;
 import com.cube.chat.pojo.User;
@@ -9,6 +10,7 @@ import com.cube.chat.pojo.vo.ResponseResult;
 import com.cube.chat.service.UserService;
 import com.cube.chat.utils.IdWorker;
 import com.cube.chat.utils.QRCodeUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.fastdfs.*;
 import org.slf4j.Logger;
@@ -21,6 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -38,11 +44,14 @@ public class UserServiceImpl implements UserService {
     @Value("${chat.fastdfs.charset}")
     String charset;
     @Autowired
-    private Environment environment;
+    private Environment env;
     @Autowired
     private QRCodeUtils qrCodeUtils;
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    FriendReqMapper friendReqMapper;
 
     @Autowired
     IdWorker idWorker;
@@ -50,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public User login(String username, String password) {
         if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)){
 
-             User user = userMapper.findByUsername(username);
+            User user = userMapper.findByUsername(username);
             if(user !=null){
                 //MD5加密认证
                 String encodingPassword = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -81,17 +90,27 @@ public class UserServiceImpl implements UserService {
             user.setPicSmall("");
             user.setPicNormal("");
             user.setUsername(user.getUsername());
-            user.setQrcode("");
+
             user.setCreatetime(new Date());
             //生成二维码,并且将二维码的路径保存到数据库中
             //要生产二维码中的字符串
             String qrcodeStr="hichat://"+user.getUsername();
             //获取一个临时目录,用来保持临时的二维码图片
-            String tempDir=environment.getProperty("hcat.tmpdir");
+            String tempDir=env.getProperty("hcat.tmpdir");
             String qrCodeFilePath = tempDir + user.getUsername() + ".png";
             qrCodeUtils.createQRCode(qrCodeFilePath,qrcodeStr);
             //将临时保存的二维码上传到FastDFS
-            String url=environment.getProperty("fdfs.httpurl");
+            try {
+                File file = new File(qrCodeFilePath);
+                InputStream in=new FileInputStream(file);
+                byte[] bytes = IOUtils.toByteArray(in);
+                //保存二维码
+                String qRCode = fdfs_upload(bytes, file.getName());
+                user.setQrcode(qRCode);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
 
             userMapper.insertSelective(user);
@@ -104,7 +123,12 @@ public class UserServiceImpl implements UserService {
         //用户信息
         User user = userMapper.selectByPrimaryKey(userId);
         //文件id
-        String fileId = fdfs_upload(file);
+        String fileId = null;
+        try {
+            fileId = fdfs_upload(file.getBytes(),file.getOriginalFilename());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         user.setId(userId);
         user.setPicSmall(fileId);
         user.setPicNormal(fileId);
@@ -137,6 +161,15 @@ public class UserServiceImpl implements UserService {
         return new ResponseResult(CommonCode.SUCCESS,user);
     }
 
+    @Override
+    public ResponseResult findByUsername(String username) {
+        UserExample example=new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andUsernameEqualTo(username);
+        List<User> users = userMapper.selectByExample(example);
+        return new ResponseResult(CommonCode.SUCCESS,users);
+    }
+
 
     //加载fdfs的配置
     private void initFdfsConfig(){
@@ -150,7 +183,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //上传文件到fdfs, 返回文件id
-   public String fdfs_upload(MultipartFile file){
+   public String fdfs_upload(byte[] bytes,String fileName){
 
 
         try{
@@ -166,11 +199,8 @@ public class UserServiceImpl implements UserService {
             StorageClient1 storageClient1=new StorageClient1(trackerServer,storeStorage);
             //上传文件
             //文件字节
-            byte[] bytes = file.getBytes();
-            //文件原始名称
-            String originalFilename = file.getOriginalFilename();
             //文件扩展名
-            String extName = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            String extName = fileName.substring(fileName.lastIndexOf(".") + 1);
             //文件id
             String fileId=storageClient1.upload_file1(bytes,extName,null);
             return fileId;

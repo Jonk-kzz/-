@@ -42,7 +42,7 @@ window.util = {
 	ajax: function(url, data, callback) {
 		if(data == undefined || data == null) {
 			data = {};
-		}
+		} 
 		console.log(config.SERVER_URL + url);
 		mui.ajax(config.SERVER_URL + url, {
 			data: data,

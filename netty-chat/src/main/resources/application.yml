@@ -42,6 +42,7 @@ mybatis:
   type-aliases-package: com.cube.chat.pojo
 
 chat:
+  tepdir: D:\APP_Project\QR
   fastdfs:
     connect_timeout_in_seconds: 5
     network_timeout_in_seconds: 30

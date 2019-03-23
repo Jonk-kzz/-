@@ -16,4 +16,7 @@ public interface UserService {
     ResponseResult updateNickname(String id, String nickname);
 
     ResponseResult findById(String userId);
+
+
+    ResponseResult findByUsername(String username);
 }
