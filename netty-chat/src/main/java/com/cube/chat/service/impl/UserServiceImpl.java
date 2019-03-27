@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
             //要生产二维码中的字符串
             String qrcodeStr="hichat://"+user.getUsername();
             //获取一个临时目录,用来保持临时的二维码图片
-            String tempDir=env.getProperty("hcat.tmpdir");
+            String tempDir=env.getProperty("chat.tmpdir");
             String qrCodeFilePath = tempDir + user.getUsername() + ".png";
             qrCodeUtils.createQRCode(qrCodeFilePath,qrcodeStr);
             //将临时保存的二维码上传到FastDFS

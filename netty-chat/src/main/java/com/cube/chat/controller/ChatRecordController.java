@@ -3,6 +3,7 @@ package com.cube.chat.controller;
 import com.cube.chat.pojo.vo.ResponseResult;
 import com.cube.chat.service.ChatRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +25,8 @@ public class ChatRecordController {
        return chatRecordService.findUnreadByUserIdAndFriendId(userId,friendId);
     }
 
-    @RequestMapping("/findUnreadByUserId")
-    public ResponseResult findUnreadByUserId(String userId){
+    @RequestMapping("/findUnreadByUserId/{userId}")
+    public ResponseResult findUnreadByUserId(@PathVariable("userId") String userId){
         return chatRecordService.findUnreadByUserId(userId);
     }
 }
