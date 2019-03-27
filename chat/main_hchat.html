@@ -328,7 +328,7 @@
 			function loadChatSnapshot() {
 				var user = util.getUser();
 				// 加载未读的聊天记录
-				mui.ajax(config.SERVER_URL + "/chatrecord/findUnreadByUserid?userid=" + user.id , {
+				mui.ajax(config.SERVER_URL + "/chatRecord/findUnreadByUserId/" + user.id , {
 					data: {
 					},
 					dataType: 'json', //服务器返回json格式数据
@@ -383,7 +383,7 @@
 								
 								html = '<li data-friendid="' + friend.id + '" ' + 'data-nickname="' + friend.nickname + '"data-picsmall="' + friend.picSmall +'" class="chat-with-friend mui-table-view-cell mui-media">' 
 								         + '<a href="javascript:;">'
-								         + '   <img class="mui-media-object mui-pull-left" src="' + friend.picSmall + '">'
+								         + '   <img class="mui-media-object mui-pull-left" src="' +config.IMG_URL+friend.picSmall + '">'
 								         + '   <div class="mui-media-body">'
 								         + friend.nickname
 								         + '       <p class="mui-ellipsis">' + message +'</p>'

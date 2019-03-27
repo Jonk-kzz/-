@@ -28,24 +28,7 @@
 		
 		<div id="msg-outter" class="mui-content">
 			<div id='msg'>
-				
-				<div class="friend_lists">
-					<div class="header_img">
-						<img src="image/default_user_pic.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper right">
-						<p class="msg-left-white">晚上过来吃饭？</p>
-					</div>
-				</div>
-
-				<div class="me_lists">
-					<div class="header_img">
-						<img src="image/default_user_pic.png" width="40px" height="40px" />
-					</div>
-					<div class="msg-wrapper left">
-						<p class="msg-right-green">好的，没问题！时间地点？</p>
-					</div>
-				</div>
+			
 			</div>
 		</div>
 		
@@ -120,7 +103,7 @@
 					console.log(JSON.stringify(user));
 					var msgHtml = '<div class="me_lists">'
 									+ '<div class="header_img">'
-										+ '<img src="' + user.picSmall +'" width="40px" height="40px" />'
+										+ '<img src="' +config.IMG_URL+user.picSmall +'" width="40px" height="40px" />'
 									+ '</div>'
 									+ '<div class="msg-wrapper left">'
 										+ '<p class="msg-right-green">' + msg + '</p>'
@@ -181,7 +164,7 @@
 				var msg_list = document.getElementById("msg");
 				
 				// 加载服务器上的消息
-				mui.ajax(config.SERVER_URL + "/chatrecord/findByUserIdAndFriendId?userid=" + user.id + "&friendid=" + friendid, {
+				mui.ajax(config.SERVER_URL + "/chatRecord/findUnreadByUserIdAndFriendId?userId=" + user.id + "&friendId=" + friendid, {
 					data: {},
 					dataType: 'json', //服务器返回json格式数据
 					type: 'post', //HTTP请求类型
